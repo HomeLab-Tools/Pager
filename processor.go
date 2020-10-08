@@ -29,7 +29,6 @@ func init() {
 
 	var wg sync.WaitGroup
 	for _, iface := range ifaces {
-		fmt.Println(iface)
 		wg.Add(1)
 		go func(iface net.Interface) {
 			defer wg.Done()
@@ -42,7 +41,6 @@ func init() {
 }
 
 func processDHCPLog(line string, logger *syslog.Writer) {
-	fmt.Println(line)
 	// Oct  6 21:40:24 dnsmasq-dhcp[14200]: DHCPACK(iface) {ip} {mac} {client}
 	parts := strings.Split(line, "]: ")
 	msg := parts[len(parts)-1]
@@ -58,7 +56,7 @@ func processDHCPLog(line string, logger *syslog.Writer) {
 
 	var vendor = "Unknow"
 	res, err := http.Get("https://api.macvendors.com/" + mac)
-	if err == nil {
+	if err == nil && res.StatusCode == http.StatusOK {
 		s, _ := ioutil.ReadAll(res.Body)
 		vendor = string(s)
 	}
